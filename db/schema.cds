@@ -7,7 +7,7 @@ using { cuid ,
 
 entity Books : cuid , managed {
         title       : localized String(255);
-        authors     : Association to Authors;
+        author      : Association to Authors;
         genre       : Genre;
         publCountry : String(3);
         stock       : NoOfBooks;
@@ -34,7 +34,7 @@ entity Authors : cuid , managed {
         dateOfDeath : Date;
         epoch       : Association to Epochs ;
         books       : Association to many Books
-                        on books.authors = $self;
+                        on books.author = $self;
 }
 
 entity Epochs : CodeList {
