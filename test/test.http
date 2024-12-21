@@ -1,0 +1,271 @@
+@server = http://localhost:4004
+@auth = Authorization: Basic alice:
+
+
+### Books
+# @name Books_GET
+GET {{server}}/odata/v4/admin/Books
+{{auth}}
+
+
+### Books
+# @name Books_POST
+POST {{server}}/odata/v4/admin/Books
+Content-Type: application/json
+{{auth}}
+
+{
+  "ID": "31141215-8ef0-46b5-a7a5-976855a3181c",
+  "title": "title-31141215",
+  "author": {
+    "ID": "4215692e-7666-440c-a742-c2bd9f8203e6"
+  },
+  "genre": 2,
+  "publCountry": {
+    "code": "806"
+  },
+  "stock": 21,
+  "price": {
+    "amount": 91.13,
+    "currency": {
+      "code": "856"
+    }
+  },
+  "isHardcover": false,
+  "createdAt": "2017-04-27T00:00:00.000Z",
+  "createdBy": "createdBy.ijgpr@example.org",
+  "modifiedAt": "2007-01-09T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.ijgpr@example.org"
+}
+
+
+### Books
+# @name Books_PATCH
+PATCH {{server}}/odata/v4/admin/Books/31141215-8ef0-46b5-a7a5-976855a3181c
+Content-Type: application/json
+{{auth}}
+
+{
+  "ID": "31141215-8ef0-46b5-a7a5-976855a3181c",
+  "title": "title-31141215",
+  "author": {
+    "ID": "4215692e-7666-440c-a742-c2bd9f8203e6"
+  },
+  "genre": 2,
+  "publCountry": {
+    "code": "806"
+  },
+  "stock": 21,
+  "price": {
+    "amount": 91.13,
+    "currency": {
+      "code": "856"
+    }
+  },
+  "isHardcover": false,
+  "createdAt": "2017-04-27T00:00:00.000Z",
+  "createdBy": "createdBy.ijgpr@example.org",
+  "modifiedAt": "2007-01-09T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.ijgpr@example.org"
+}
+
+
+### Books
+# @name Books_DELETE
+DELETE {{server}}/odata/v4/admin/Books/31141215-8ef0-46b5-a7a5-976855a3181c
+Content-Type: application/json
+{{auth}}
+
+
+### Authors
+# @name Authors_GET
+GET {{server}}/odata/v4/admin/Authors
+{{auth}}
+
+
+### Authors
+# @name Authors_POST
+POST {{server}}/odata/v4/admin/Authors
+Content-Type: application/json
+{{auth}}
+
+{
+  "ID": "4215692e-7666-440c-a742-c2bd9f8203e6",
+  "name": "name-4215692",
+  "dateOfBirth": "2005-10-14",
+  "dateOfDeath": "2007-09-14",
+  "epoch": {
+    "ID": 3723140
+  },
+  "createdAt": "2016-09-01T00:00:00.000Z",
+  "createdBy": "createdBy.2icuk@example.org",
+  "modifiedAt": "2023-02-02T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.2icuk@example.net"
+}
+
+
+### Authors
+# @name Authors_PATCH
+PATCH {{server}}/odata/v4/admin/Authors/4215692e-7666-440c-a742-c2bd9f8203e6
+Content-Type: application/json
+{{auth}}
+
+{
+  "ID": "4215692e-7666-440c-a742-c2bd9f8203e6",
+  "name": "name-4215692",
+  "dateOfBirth": "2005-10-14",
+  "dateOfDeath": "2007-09-14",
+  "epoch": {
+    "ID": 3723140
+  },
+  "createdAt": "2016-09-01T00:00:00.000Z",
+  "createdBy": "createdBy.2icuk@example.org",
+  "modifiedAt": "2023-02-02T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.2icuk@example.net"
+}
+
+
+### Authors
+# @name Authors_DELETE
+DELETE {{server}}/odata/v4/admin/Authors/4215692e-7666-440c-a742-c2bd9f8203e6
+Content-Type: application/json
+{{auth}}
+
+
+### Countries
+# @name Countries_GET
+GET {{server}}/odata/v4/admin/Countries
+{{auth}}
+
+
+### Currencies
+# @name Currencies_GET
+GET {{server}}/odata/v4/admin/Currencies
+{{auth}}
+
+
+### Epochs
+# @name Epochs_GET
+GET {{server}}/odata/v4/admin/Epochs
+{{auth}}
+
+
+
+### ----------------------INPUT VALIDATION--------------------------------------------------
+# Create a new author with empty name and invalid epoch ID
+POST {{server}}/odata/v4/admin/Authors
+Content-Type: application/json
+
+{
+  "name": "",
+  "dateOfBirth": "1759-11-10",
+  "dateOfDeath": "1805-05-09",  
+  "epoch": {"ID": 190}
+}
+
+
+### ------------------------------------------------------------------------
+# Create a new book with empty title, invalid author ID and invalid genre
+POST {{server}}/odata/v4/admin/Books
+Content-Type: application/json
+
+{
+  "title": "",
+  "author_ID": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "genre": 3
+}
+
+
+### ------------------------------------------------------------------------
+# Create a new book with empty title, invalid genre and without author
+POST {{server}}/odata/v4/admin/Books
+Content-Type: application/json
+
+{
+  "title": "",
+  "genre": 3
+}
+
+
+### ------------------------------------------------------------------------
+# Retrieve the ID of William Shakespeare
+# Use this ID to create a new book with stock 0 (default)
+# @name getShakespeare
+GET {{server}}/odata/v4/admin/Authors?$filter=name eq 'William Shakespeare'
+
+@authorID = {{getShakespeare.response.body.$.value[0].ID}}
+
+###
+
+POST {{server}}/odata/v4/admin/Books
+Content-Type: application/json
+
+{
+  "title": "Macbeth",
+  "author_ID": "{{authorID}}"
+}
+
+
+### ---------------------OPTIMISTIC LOCKING---------------------------------------------------
+# Create a new author
+# ... and assign the ID of the newly created author to the variable authorID
+# @name createNewAuthor
+POST {{server}}/odata/v4/admin/Authors
+Content-Type: application/json
+
+{
+  "name": "Initial Version"
+}
+
+###
+@authorID = {{createNewAuthor.response.body.$.ID}}
+
+
+
+### Read the newly created author for editing a first time
+# ... and assign the received ETag to the variable ETag1
+GET {{server}}/odata/v4/admin/Authors({{authorID}})
+
+###
+@ETag1 = {{createNewAuthor.response.headers.ETag}}
+
+
+
+### Read the newly created author for editing a second time
+# ... and assign the received ETag to the variable ETag2
+GET {{server}}/odata/v4/admin/Authors({{authorID}})
+
+###
+@ETag2 = {{createNewAuthor.response.headers.ETag}}
+
+
+
+#   ETag1 and Etag2 match because no changes have been made yet.
+
+
+
+### ------------------------------------------------------------------------
+# Update the newly created author using ETag1 received 
+# when the Author was first read.
+# The update implicitly creates a new ETag value.
+PUT {{server}}/odata/v4/admin/Authors({{authorID}})
+If-Match: {{ETag1}}
+Content-Type: application/json
+
+{
+  "name": "Update 1 of Initial Version"
+}
+
+
+
+### ------------------------------------------------------------------------
+# Try another update using ETag2 received
+# when the author was read for the second time.
+# This will fail with a HTTP status code 412 Precondition Failed.
+PUT {{server}}/odata/v4/admin/Authors({{authorID}})
+If-Match: {{ETag2}}
+Content-Type: application/json
+
+{
+  "name": "Update 2 of Initial Version"
+}
