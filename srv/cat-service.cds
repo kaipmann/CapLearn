@@ -1,9 +1,6 @@
 using myProject as db from '../db/schema';
 
-
-
 service CatalogService @(path: '/cat') {
-
     entity Authors as projection on db.Authors {
         *,
         epoch.name as period
@@ -13,7 +10,6 @@ service CatalogService @(path: '/cat') {
         modifiedAt,
         modifiedBy
     };
-
 
     entity Books   as projection on db.Books {
         ID,
@@ -25,6 +21,10 @@ service CatalogService @(path: '/cat') {
         price.currency,
         stock,
         author
+    };
+
+    action submitOrder(book : db.Books:ID, quantity : Integer) returns {
+        stock : db.Books:stock
     };
 
 }
