@@ -14,14 +14,20 @@
     "@cap-js/sqlite": "^1.7.7"
   },
   "scripts": {
-    "start": "cds-serve"
-  }, 
-  "cds": { "requires": { 
-    "db": { 
-      "kind": "sqlite", 
-      "credentials": { "url": ":memory" } 
-      } 
-    }}
-
-
+    "start": "cds-serve",
+    "watch-bookshop": "cds watch --open bookshop/webapp/index.html?sap-ui-xx-viewCache=false"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "url": ":memory"
+        }
+      }
+    }
+  },
+  "sapux": [
+    "app/bookshop"
+  ]
 }
